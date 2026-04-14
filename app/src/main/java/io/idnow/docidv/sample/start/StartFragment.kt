@@ -1,0 +1,131 @@
+package io.idnow.docidv.sample.start
+
+import android.app.Activity
+import android.content.Context
+import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import androidx.navigation.navOptions
+import io.idnow.docidv.android.sdk.IDnowDocIDV
+import io.idnow.docidv.android.sdk.IDnowDocIDVConfig
+import io.idnow.docidv.android.sdk.IDnowDocIDVResult
+import io.idnow.docidv.sample.R
+import io.idnow.docidv.sample.databinding.FragmentStartBinding
+
+class StartFragment : Fragment(), IDnowDocIDV.ResultListener {
+    // =============================================================================================
+    // Private properties
+    // =============================================================================================
+    private var _binding: FragmentStartBinding? = null
+    private val binding get() = _binding!!
+
+    private val args: StartFragmentArgs by navArgs()
+    private var idnowDocIDV: IDnowDocIDV? = null
+    private var pendingIdentResult: PendingIdentResult? = null
+
+    // =============================================================================================
+    // Fragment methods
+    // =============================================================================================
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        val idnowConfig = IDnowDocIDVConfig.Builder.getInstance().build()
+        idnowDocIDV = IDnowDocIDV.getInstance()
+        idnowDocIDV?.initialize(context as Activity, idnowConfig)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentStartBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        idnowDocIDV?.start(args.identToken, this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        handlePendingResult()
+    }
+
+    // =============================================================================================
+    // IDnowDocIDV.ResultListener methods
+    // =============================================================================================
+    override fun onIdentResult(iDnowDocIDVResult: IDnowDocIDVResult) {
+        Log.i("StartFragment", iDnowDocIDVResult.toString())
+        pendingIdentResult = when (iDnowDocIDVResult.resultType) {
+            IDnowDocIDVResult.ResultType.ERROR -> PendingIdentResult.Error(mapErrorMessage(iDnowDocIDVResult.statusCode))
+            else -> PendingIdentResult.Success
+        }
+        if (isResumed) handlePendingResult()
+    }
+
+    // =============================================================================================
+    // private methods
+    // =============================================================================================
+    private fun showBaseAlert(message: String) {
+        context?.let {
+            AlertDialog.Builder(requireContext())
+                .setTitle(message)
+                .setPositiveButton("Ok") { dialog, _ ->
+                    dialog.dismiss()
+                    backToHome()
+                }
+                .show()
+        }
+    }
+
+    private fun handlePendingResult() {
+        when (val result = pendingIdentResult) {
+            is PendingIdentResult.Error -> {
+                pendingIdentResult = null
+                showBaseAlert(result.message)
+            }
+            is PendingIdentResult.Success -> {
+                pendingIdentResult = null
+                backToHome()
+            }
+            null -> { /* Rien à faire */ }
+        }
+    }
+
+    private fun backToHome() {
+        findNavController().navigate(
+            StartFragmentDirections.actionStartFragmentToHomeFragment(),
+            navOptions {
+                popUpTo(R.id.homeFragment) {
+                    inclusive = true
+                }
+                launchSingleTop = true
+            }
+        )
+    }
+
+    private fun mapErrorMessage(sdkStatusCode: String): String {
+        return when (sdkStatusCode) {
+            "E100" -> getString(R.string.idnow_platform_error_100) // Token format incorrect
+            "E101" -> getString(R.string.idnow_platform_error_101) // Token not found (404 --> get info call)
+            "E102" -> getString(R.string.idnow_platform_error_102) // Token expired/deleted (410 --> get info call)
+            "E103" -> getString(R.string.idnow_platform_error_103) // Token already completed (412 --> start call)
+            "E130" -> getString(R.string.idnow_platform_error_130) // REST call for resources failed, response problem
+            "E131" -> getString(R.string.idnow_platform_error_131) // REST call for resources failed, server problem
+            "E150" -> getString(R.string.idnow_platform_error_150) // Start ident failed, response problem
+            "E151" -> getString(R.string.idnow_platform_error_151) // Start ident failed, server problem
+            "E152" -> getString(R.string.idnow_platform_error_152) // Start ident failed, missing session key<
+            "E160" -> getString(R.string.idnow_platform_error_160) // REST call for Emirates NFC failed, response problem
+            "E170" -> getString(R.string.idnow_platform_error_170) // Backend forced close websocket connection
+            "E171" -> getString(R.string.idnow_platform_error_171) // Backend command PROCESS_FAILED via websocket
+            "E180" -> getString(R.string.idnow_platform_error_180) // No application context
+            else -> {
+                val errorMessageTemplate = getString(R.string.idnow_platform_error_generic)
+                errorMessageTemplate.replace("{errorCode}", sdkStatusCode)
+            }
+        }
+    }
+}

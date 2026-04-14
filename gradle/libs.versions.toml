@@ -1,0 +1,32 @@
+[versions]
+agp = "8.13.2"
+kotlin = "2.3.20"
+coreKtx = "1.18.0"
+lifecycleRuntimeKtx = "2.10.0"
+navigation = "2.9.7"
+constraintlayout = "2.2.1"
+viewbinding = "9.1.0"
+activityKtx = "1.13.0"
+docidv = "1.6.0"
+
+[libraries]
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation" }
+androidx-navigation-ui = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation" }
+constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+viewbinding = { group = "androidx.databinding", name = "viewbinding", version.ref = "viewbinding" }
+activityKtx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
+
+# DocIDV
+idnow-docidv-bom = { group = "io.idnow.docidv", name = "bom", version.ref = "docidv" }
+idnow-docidv-core = { group = "io.idnow.docidv", name = "core" }
+idnow-docidv-ai = { group = "io.idnow.docidv", name = "ai" }
+idnow-docidv-eid-governikus = { group = "io.idnow.docidv", name = "eid-governikus" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+nav-safe-args = { id = "androidx.navigation.safeargs", version.ref = "navigation" }
+android-library = { id = "com.android.library", version.ref = "agp" }

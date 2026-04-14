@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">DocidvSample</string>
+    <string name="idnow_platform_start">Start identification</string>
+    <string name="idnow_platform_error_100">This Ident-ID is invalid.\nE100</string>
+    <string name="idnow_platform_error_101">The Ident-ID you entered cannot be found.\nE101</string>
+    <string name="idnow_platform_error_102">This Ident-ID has expired or has been deleted.\nE102</string>
+    <string name="idnow_platform_error_103">The identification for this Ident-ID has already been completed.\nE103</string>
+    <string name="idnow_platform_error_130">There was an error in reading the identification resources data. Please try again later.\nE130</string>
+    <string name="idnow_platform_error_131">There was an error in retrieving the identification resources data. Please try again later.\nE131</string>
+    <string name="idnow_platform_error_150">There was an error while starting the ident: Invalid response from backend. Please try again later.\nE150</string>
+    <string name="idnow_platform_error_151">There was an error while starting the ident: Server issue. Please try again later.\nE151</string>
+    <string name="idnow_platform_error_152">There was an error while starting the ident: Missing session key. Please try again later.\nE152</string>
+    <string name="idnow_platform_error_160">The identification process has failed. Please try again.\nE160</string>
+    <string name="idnow_platform_error_170">This session has expired. Please try again.\nE170</string>
+    <string name="idnow_platform_error_171">The identification process has failed. Please try again.\nE171</string>
+    <string name="idnow_platform_error_180">Application context has been cleared. Please try again.\nE180</string>
+    <string name="idnow_platform_error_generic">Oops, something went wrong. Please try again.\nCode: {errorCode}</string>
+</resources>
